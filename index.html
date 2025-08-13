@@ -131,7 +131,6 @@ const SacredGeometryDecoder = () => {
     let centerX = 0, centerY = 0;
     let minX = width, maxX = 0, minY = height, maxY = 0;
 
-    // Analyze image properties
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
         const idx = (y * width + x) * 4;
@@ -163,7 +162,6 @@ const SacredGeometryDecoder = () => {
     const fillRatio = pixelCount / (width * height);
     const compactness = pixelCount / ((maxX - minX + 1) * (maxY - minY + 1));
 
-    // Analyze radial symmetry
     let radialSymmetry = 0;
     const maxRadius = Math.min(width, height) / 2;
     const angles = 32;
@@ -186,7 +184,6 @@ const SacredGeometryDecoder = () => {
     const meanRadial = radialSamples.reduce((sum, val) => sum + val, 0) / radialSamples.length;
     radialSymmetry = 1 - (radialSamples.reduce((sum, val) => sum + Math.abs(val - meanRadial), 0) / (meanRadial * radialSamples.length));
 
-    // Classify geometry and assign physics
     if (radialSymmetry > 0.85 && aspectRatio > 0.8 && aspectRatio < 1.2 && compactness > 0.3) {
       analysis.geometry = 'Circular symmetry, high radial consistency';
       analysis.constraint = 'Radial field divergence with central source';
@@ -210,7 +207,7 @@ const SacredGeometryDecoder = () => {
       analysis.constraint = 'Superposition of multiple geometric modes';
       analysis.operator = 'Φ(x) = Σ_i c_i φ_i(x) with ∇²φ_i = λ_iφ_i';
       analysis.physicsLaw = 'Eigenmode Decomposition / Spectral Analysis';
-      analysis.application = 'Cavity resonances, structural vibrations, quantum confined states';
+      application: 'Cavity resonances, structural vibrations, quantum confined states';
       analysis.equation = 'λ_i = (nπ/L)² for 1D cavity modes';
       analysis.verification = 'Dimensional: [λ] = [L⁻²] ✓';
       analysis.color = 'from-purple-500 to-pink-500';
@@ -467,4 +464,63 @@ const SacredGeometryDecoder = () => {
                 className="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-4 rounded-xl font-medium hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 transition-all duration-300 transform hover:scale-105 shadow-lg"
               >
                 <Play className="w-5 h-5" />
-                {isProcessing ? 'Processin
+                {isProcessing ? 'Processing...' : 'Run Analysis'}
+              </button>
+              <button
+                onClick={resetAnalysis}
+                disabled={isProcessing}
+                className="flex-1 bg-white/10 text-blue-200 px-6 py-4 rounded-xl font-medium hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 transition-all duration-300 transform hover:scale-105"
+              >
+                <RotateCcw className="w-5 h-5" />
+                Reset
+              </button>
+            </div>
+          </div>
+
+          {/* Output Section */}
+          <div className="xl:col-span-1 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-2xl">
+            <h2 className="text-2xl font-semibold text-white mb-6 flex items-center gap-3">
+              <Eye className="w-6 h-6" />
+              Analysis Output
+            </h2>
+            
+            <div className="space-y-4">
+              <div className="p-4 bg-white/5 rounded-xl border border-white/10">
+                <h3 className="text-lg font-semibold text-white mb-2">{currentSymbol.name}</h3>
+                <p className="text-blue-200 text-sm mb-2">{currentSymbol.description}</p>
+                <div className="grid grid-cols-1 gap-2 text-sm">
+                  <div><span className="font-medium text-blue-100">Geometry:</span> {currentSymbol.geometry}</div>
+                  <div><span className="font-medium text-blue-100">Constraint:</span> {currentSymbol.constraint}</div>
+                  <div><span className="font-medium text-blue-100">Operator:</span> {currentSymbol.operator}</div>
+                  <div><span className="font-medium text-blue-100">Physics Law:</span> {currentSymbol.physicsLaw}</div>
+                  <div><span className="font-medium text-blue-100">Application:</span> {currentSymbol.application}</div>
+                </div>
+              </div>
+              
+              {showEquationDetails && (
+                <div className="p-4 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl border border-white/10">
+                  <h3 className="text-lg font-semibold text-white mb-2 flex items-center gap-2">
+                    <BookOpen className="w-5 h-5" />
+                    Equation Details
+                  </h3>
+                  <div className="text-blue-100 text-sm space-y-2">
+                    <div><span className="font-medium">Equation:</span> {currentSymbol.equation}</div>
+                    <div><span className="font-medium">Verification:</span> {currentSymbol.verification}</div>
+                    <div><span className="font-medium">Complexity:</span> <span className={getComplexityColor(currentSymbol.complexity)}>{currentSymbol.complexity}</span></div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <footer className="mt-12 text-center text-blue-200">
+          <p>© 2025 Universal Geometric Decoder | <a href="https://github.com/Ultramagnus85/Revised-Periodic-Table" className="text-blue-400 hover:underline">GitHub Repository</a></p>
+        </footer>
+      </div>
+    </div>
+  );
+};
+
+export default SacredGeometryDecoder;
